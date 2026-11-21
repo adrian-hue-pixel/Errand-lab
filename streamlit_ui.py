@@ -1,4 +1,6 @@
 """Atlas presentation for the Streamlit workspace."""
+from base64 import b64encode
+
 import streamlit as st
 
 from artwork import icon, mascot, route_plot
@@ -25,8 +27,8 @@ CSS = """
     display: flex; align-items: center; gap: .7rem; font-size: 1.3rem;
     font-weight: 750; letter-spacing: -.05em; color: var(--atlas-ink);
 }
-.atlas-brand svg {
-    box-sizing: content-box; padding: .55rem; border-radius: .75rem;
+.atlas-brand img {
+    box-sizing: content-box; width: 19px; height: 19px; padding: .55rem; border-radius: .75rem;
     background: var(--atlas-primary); color: var(--atlas-onprimary);
 }
 .atlas-eyebrow {
@@ -43,8 +45,8 @@ CSS = """
     font-size: 1.06rem; line-height: 1.62;
 }
 .atlas-art { position: relative; max-width: 510px; margin-top: .5rem; color: var(--atlas-accent); }
-.atlas-art > svg:first-child { width: 100%; height: auto; display: block; }
-.atlas-art > .mascot { position: absolute; top: -14px; right: 5%; }
+.atlas-map { width: 100%; height: auto; display: block; border-radius: 16px; }
+.atlas-art > .atlas-mascot { position: absolute; width: 92px; height: 92px; top: -14px; right: 5%; }
 .st-key-atlas-sign-in, .st-key-atlas-setup, [data-testid="stForm"], [data-testid="stMetric"] {
     border: 1px solid #70888070; border-radius: 18px; padding: 1.4rem;
     background: var(--atlas-glass); box-shadow: 0 20px 52px -36px #041210bf;
@@ -72,7 +74,7 @@ CSS = """
 }
 [data-testid="stVideo"] { border-radius: 18px; overflow: hidden; }
 @media (prefers-reduced-motion: no-preference) {
-    .atlas-art .float { animation: atlas-float 5s ease-in-out infinite; }
+    .atlas-art .atlas-mascot { animation: atlas-float 5s ease-in-out infinite; }
     @keyframes atlas-float { 50% { transform: translateY(-5px); } }
 }
 @media (max-width: 760px) {
@@ -86,8 +88,14 @@ def apply_theme():
     st.html(f"<style>{COLORS}{CSS}</style>")
 
 
+def image(svg, class_name="", alt=""):
+    data = b64encode(svg.encode()).decode("ascii")
+    return f'<img class="{class_name}" alt="{alt}" src="data:image/svg+xml;base64,{data}">'
+
+
 def wordmark():
-    st.html(f'<div class="atlas-brand">{icon("Plan a route")}<span>ErrandLab</span></div>')
+    mark = image(icon("Plan a route").replace("currentColor", DARK["onprimary"]))
+    st.html(f'<div class="atlas-brand">{mark}<span>ErrandLab</span></div>')
 
 
 def entry_art():
@@ -97,7 +105,9 @@ def entry_art():
         <h1>One outing.<br><em>Every stop.</em></h1>
         <p>Plan around closing times, traffic and a deadline to get home.</p>
     </section>""")
-    st.html(f'<div class="atlas-art">{route_plot(preset("closing"), (1, 2, 3, 0))}{mascot(size=92)}</div>')
+    map_image = image(route_plot(preset("closing"), (1, 2, 3, 0)), "atlas-map", "Four-stop route looping home")
+    companion = image(mascot(size=92), "atlas-mascot")
+    st.html(f'<div class="atlas-art">{map_image}{companion}</div>')
 
 
 def heading(section):
