@@ -12,6 +12,7 @@ import io
 import json
 import os
 import re
+import sys
 
 from atmosphere import stylesheet
 from layout import styles
@@ -373,5 +374,18 @@ def main():
             pass
 
 
-if __name__ == "__main__":
+def launch():
+    """Support existing Cloud deployments that still point at app.py."""
+    if "streamlit" in sys.modules:
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+        if get_script_run_ctx(suppress_warning=True) is not None:
+            from streamlit_app import main as streamlit_main
+
+            streamlit_main()
+            return
     main()
+
+
+if __name__ == "__main__":
+    launch()
