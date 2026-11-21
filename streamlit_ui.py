@@ -12,7 +12,7 @@ from routing import PRESETS, RESEARCH, analyze, preset
 ROOT = Path(__file__).resolve().parent
 FILM = ROOT / "media" / "sample-route.mp4"
 THEME = (ROOT / "style.css").read_text(encoding="utf-8") + styles()
-CAPI_CSS = (ROOT / "capi_mascot.css").read_text(encoding="utf-8")
+CAPI_STYLESHEET = ROOT / "capi_mascot.css"
 CAPI_ART = ROOT / "media" / "capi.png"
 SECTIONS = ("Overview", "Plan a route", "Evidence", "Capi chat", "Settings")
 
@@ -162,7 +162,8 @@ CSS = """
 
 def apply_theme():
     marker = '<span class="motion-off" hidden></span>' if not st.session_state.get("errand_motion", True) else ""
-    st.html(f"<style>{THEME}{CSS}{CAPI_CSS}</style>{marker}")
+    mascot_css = CAPI_STYLESHEET.read_text(encoding="utf-8")
+    st.html(f"<style>{THEME}{CSS}{mascot_css}</style>{marker}")
 
 
 def mascot(greeting, *, show_name=False):
