@@ -28,7 +28,7 @@
     display: block;
     position: relative;
     width: var(--capi-size);
-    aspect-ratio: 1.17;
+    aspect-ratio: 1.36;
     isolation: isolate;
 }
 .capi-figure span { display: block; position: absolute; }
@@ -36,17 +36,17 @@
 .capi-shadow { left: 16%; right: 12%; bottom: 4%; height: 12%; border-radius: 50%; background: #48281830; filter: blur(4px); }
 .capi-character { inset: 0; transform-origin: center 91%; }
 .capi-body {
-    left: 15%; top: 45%; width: 65%; height: 49%;
-    border-radius: 54% 49% 47% 43% / 62% 66% 34% 38%;
-    background: radial-gradient(ellipse at 25% 19%, #e6ad79, #ae6946 62%, #79412c);
+    left: 6%; top: 43%; width: 72%; height: 50%;
+    border-radius: 49% 38% 29% 39% / 58% 54% 39% 41%;
+    background: radial-gradient(ellipse at 25% 19%, #cfaa7b, #a37b52 58%, #775337);
     box-shadow: inset 0 -5px 7px #733e2940;
 }
-.capi-paw { bottom: 7%; height: 17%; width: 21%; border-radius: 55% 48% 30% 35%; background: linear-gradient(#bb7953, #895037); }
-.capi-paw.back { left: 16%; width: 26%; transform: rotate(-8deg); }
-.capi-paw.front { left: 63%; }
-.capi-paw.near { left: 46%; background: linear-gradient(#d09260, #955237); }
+.capi-paw { bottom: 7%; height: 17%; width: 21%; border-radius: 55% 48% 30% 35%; background: linear-gradient(#b68c61, #805c3e); }
+.capi-paw.back { left: 11%; width: 26%; transform: rotate(-8deg); }
+.capi-paw.front { left: 65%; }
+.capi-paw.near { left: 51%; background: linear-gradient(#bb9465, #805b3c); }
 .capi-scarf {
-    left: 35%; top: 57%; width: 45%; height: 15%;
+    left: 39%; top: 56%; width: 40%; height: 15%;
     border-radius: 50% 30% 41% 54%;
     background: linear-gradient(166deg, #db7758, #9d3929 72%);
     box-shadow: 0 2px 3px #76372842;
@@ -57,22 +57,22 @@
     border-radius: 20% 24% 80% 26%; transform: rotate(22deg);
     background: linear-gradient(#c6553d, #913627);
 }
-.capi-head { left: 28%; top: 20%; width: 62%; height: 50%; }
+.capi-head { left: 41%; top: 18%; width: 54%; height: 51%; }
 .capi-face {
     inset: 0;
-    border-radius: 43% 49% 46% 43% / 47% 47% 48% 46%;
-    background: radial-gradient(ellipse at 29% 18%, #fae0b0, #e8ad76 43%, #b87651 77%, #956247);
+    border-radius: 35% 29% 27% 42% / 53% 37% 45% 47%;
+    background: radial-gradient(ellipse at 29% 18%, #ecd1a3, #ccaa7b 43%, #ac8359 77%, #8e6a4b);
     box-shadow: inset 0 -4px 4px #94583435, 0 2px 6px #71482b35;
 }
 .capi-shine { width: 26%; height: 12%; left: 17%; top: 9%; border-radius: 50%; background: #fff0cf84; transform: rotate(-18deg); }
 .capi-ear {
-    width: 24%; height: 37%; top: -24%; border-radius: 56% 58% 44% 41%;
+    width: 17%; height: 28%; top: -17%; border-radius: 56% 58% 44% 41%;
     background: radial-gradient(ellipse at 43% 44%, #b57961 0 41%, #c48a61 49%, #a96947 99%);
     box-shadow: inset 1px 2px 2px #ffdbad60;
 }
-.capi-ear.left { left: 9%; transform: rotate(-23deg); }
-.capi-ear.right { right: 13%; transform: rotate(17deg) scale(.90); }
-.capi-eyes { left: 38%; right: 13%; top: 31%; height: 13%; transform-origin: center; }
+.capi-ear.left { left: 17%; transform: rotate(-18deg); }
+.capi-ear.right { right: 29%; transform: rotate(16deg) scale(.9); }
+.capi-eyes { left: 30%; right: 22%; top: 28%; height: 12%; transform-origin: center; }
 .capi-eye {
     background: #33241d; width: 19%; height: 100%;
     border-radius: 54% 51% 47% 47%;
@@ -81,13 +81,19 @@
 .capi-eye.left { left: 0; }
 .capi-eye.right { right: 0; height: 88%; }
 .capi-muzzle {
-    right: 3%; top: 47%; width: 64%; height: 46%;
-    border-radius: 42% 38% 51% 46% / 46% 46% 62% 59%;
-    background: linear-gradient(160deg, #f4d2a3 20%, #d9a579 75%);
+    right: -2%; top: 42%; width: 65%; height: 51%;
+    border-radius: 33% 23% 21% 36% / 43% 37% 41% 44%;
+    background: linear-gradient(160deg, #d2b390 20%, #b89775 75%);
     box-shadow: inset 0 -2px 3px #aa684d40;
 }
-.capi-nose { width: 26%; height: 24%; top: 19%; left: 52%; background: #5a392c; border-radius: 53% 53% 70% 70%; }
-.capi-smile { top: 48%; left: 46%; width: 37%; height: 32%; border: solid #684431; border-width: 0 0 2px; border-radius: 50%; transform: rotate(-8deg); }
+.capi-nose { width: 23%; height: 23%; top: 15%; left: 64%; background: #5a392c; border-radius: 53% 53% 70% 70%; }
+.capi-smile { top: 48%; left: 47%; width: 39%; height: 25%; border: solid #684431; border-width: 0 0 2px; border-radius: 50%; transform: rotate(-8deg); }
+.capi-teeth {
+    top: 70%; left: 62%; width: 19%; height: 46%;
+    border-radius: 1px 1px 3px 3px;
+    background: linear-gradient(90deg, #fff6df 0 46%, #86664c 46% 54%, #fff2d7 54%);
+    box-shadow: 0 1px 2px #653e2855;
+}
 .capi-cheek { left: 19%; top: 48%; width: 16%; height: 13%; border-radius: 50%; transform: rotate(-15deg); background: #d97f7270; }
 @media (prefers-reduced-motion: no-preference) {
     .capi-character { animation: capi-idle 4.6s ease-in-out infinite; }

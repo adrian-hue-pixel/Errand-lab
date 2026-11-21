@@ -169,7 +169,7 @@ def mascot(greeting, *, show_name=False):
     st.html(f"""
     <div class="capi-avatar">
         <p class="capi-note">{escape(greeting)}</p>
-        <span class="capi-figure" role="img" aria-label="Capi, a seated capybara with a rust bandanna">
+        <span class="capi-figure" role="img" aria-label="Capi, a seated capybara with two front teeth and a rust bandanna">
             <span class="capi-glow"></span><span class="capi-shadow"></span>
             <span class="capi-character">
                 <span class="capi-body"></span>
@@ -179,7 +179,7 @@ def mascot(greeting, *, show_name=False):
                     <span class="capi-ear left"></span><span class="capi-ear right"></span>
                     <span class="capi-face"></span><span class="capi-shine"></span><span class="capi-cheek"></span>
                     <span class="capi-eyes"><span class="capi-eye left"></span><span class="capi-eye right"></span></span>
-                    <span class="capi-muzzle"><span class="capi-nose"></span><span class="capi-smile"></span></span>
+                    <span class="capi-muzzle"><span class="capi-nose"></span><span class="capi-smile"></span><span class="capi-teeth"></span></span>
                 </span>
             </span>
         </span>
