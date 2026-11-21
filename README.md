@@ -8,6 +8,11 @@ ErrandLab helps people who combine several stops into one outing. Enter two to s
 
 Open the [hosted ErrandLab app](https://errand-lab.streamlit.app/) to plan a route, explore the evidence, or chat with Capi. You can use it directly in your browser.
 
+### Hosted interface
+
+- **Navigation.** Rounded tabs link to Overview, Plan a route, Evidence, Capi Chat, and Settings. The active page is highlighted, and the route film is on Overview.
+- **Ambient background.** Soft peach and sage gradients drift behind the cream canvas. The animation respects your device’s reduced-motion preference and can be turned off under **Settings → Decorative motion**.
+
 ### Deploy on Streamlit Community Cloud
 
 Create the hosted app from this repository and set **Main file path** to `streamlit_app.py`. Use Python 3.12 or 3.13 if configuring a version. The hosted demo includes the route planner, comparison downloads, evidence, the Overview route film and Capi chat. The local WSGI app includes the account workspace and interactive 3D.
