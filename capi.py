@@ -27,11 +27,11 @@ def local_topic(question):
     # Anchor guidance in ErrandLab terminology and keep the default conversation narrowly scoped.
     probes = (
         ("video", {"cinema", "film", "video", "transit"}),
-        ("settings", {"settings", "groq", "mascot", "motion", "chat"}),
-        ("evidence", {"evidence", "benchmark", "nhts", "sensitivity", "study", "survey"}),
-        ("delay", {"robust", "delay", "nearest", "optimizer", "strategies"}),
-        ("results", {"results", "success", "median", "percentile", "simulated"}),
-        ("planner", {"planner", "outing", "offset", "offsets", "errands"}),
+        ("settings", {"settings", "groq", "mascot", "motion", "chat", "key", "api"}),
+        ("evidence", {"evidence", "benchmark", "nhts", "sensitivity", "study", "survey", "research"}),
+        ("delay", {"robust", "delay", "nearest", "optimizer", "optimization", "strategies", "uncertainty", "uncertain"}),
+        ("results", {"results", "success", "median", "percentile", "simulated", "metric", "comparison"}),
+        ("planner", {"planner", "outing", "offset", "offsets", "errands", "stop", "stops", "opening", "hours", "closing", "traffic", "departure", "return", "route", "distance", "window", "order"}),
     )
     return next((topic for topic, keywords in probes if words & keywords), None)
 
