@@ -1,0 +1,5 @@
+scenario,test_days,nearest_full_success,fixed_time_full_success,delay_aware_full_success,lift_vs_nearest,nearest_ci_lower,nearest_ci_upper,lift_vs_fixed,fixed_ci_lower,fixed_ci_upper
+closing,600,0.023333333333333334,0.0016666666666666668,0.5083333333333333,0.485,0.445,0.53,0.5066666666666667,0.4666666666666667,0.55
+opening,600,0.0,0.525,0.525,0.525,0.485,0.5666666666666667,0.0,0.0,0.0
+spread,600,0.895,0.895,0.895,0.0,0.0,0.0,0.0,0.0,0.0
+relaxed,600,1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
