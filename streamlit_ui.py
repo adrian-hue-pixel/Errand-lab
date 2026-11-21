@@ -1,7 +1,9 @@
 """Presentation for the original ErrandLab interface on Streamlit."""
 from html import escape
+import json
 import os
 from pathlib import Path
+import re
 
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -338,6 +340,19 @@ def hosted_groq_key():
     return os.environ.get("GROQ_API_KEY", "").strip()
 
 
+def groq_error_detail(error):
+    """Return a short provider diagnostic without ever echoing a credential."""
+    try:
+        payload = json.loads(error.read().decode("utf-8", "replace"))
+        message = payload.get("error", {}).get("message", "")
+    except (ValueError, AttributeError, TypeError):
+        message = ""
+    if not isinstance(message, str):
+        return ""
+    message = re.sub(r"gsk_[A-Za-z0-9_-]+", "[redacted]", message)
+    return message[:240].strip()
+
+
 def capi_chat():
     from urllib.error import HTTPError, URLError
 
@@ -397,16 +412,19 @@ def capi_chat():
                         with st.spinner("Capi is thinking…"):
                             topic = groq_topic(question, key)
                     except HTTPError as error:
+                        provider_detail = groq_error_detail(error)
                         if error.code == 401:
                             detail = "Groq did not accept the configured key (HTTP 401). Replace GROQ_API_KEY in Streamlit Secrets with a fresh key."
                         elif error.code == 403:
-                            detail = "Groq returned HTTP 403. The key’s project may not have access to the selected model; check model access for the same project that created the key."
+                            detail = "Groq returned HTTP 403. Check the key’s project and model access."
                         elif error.code == 429:
                             detail = "Groq rate limit or quota reached (HTTP 429). Check your Groq account limits."
                         elif error.code in (400, 404):
                             detail = f"Groq rejected the request (HTTP {error.code}). The key reached Groq, but the model/request needs attention."
                         else:
                             detail = f"Groq returned HTTP {error.code}. Try again shortly."
+                        if provider_detail:
+                            detail += " Groq says: " + provider_detail
                         st.caption(detail + " Built-in guidance is shown below.")
                     except URLError:
                         st.caption("Could not reach Groq (network or timeout). Built-in guidance is shown below.")
