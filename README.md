@@ -13,7 +13,7 @@ cd errand-lab
 
 You can also download the repository ZIP and open a terminal in the extracted folder.
 
-Requires Python 3.10 or newer. Routing runs locally using the Python standard library. Capi chat optionally contacts Groq with your own key.
+Requires Python 3.10 or newer. Routing runs locally using the Python standard library. Capi chat is optional.
 
 ```bash
 python3 app.py
@@ -23,7 +23,7 @@ Open [ErrandLab on port 8501](http://127.0.0.1:8501). On Windows, use `py -3 app
 
 1. Sign in with your email and password, create an account, or use **Demo quick sign-in** for an isolated temporary workspace. Existing username accounts can still sign in.
 2. Open **Plan a route**, choose Closing time, and compare strategies. Save completed runs to your account.
-3. Open **Settings** to select the theme, ambient motion, notification preferences and mascot visibility. To enable optional Capi chat, open **Settings**, paste your own Groq API key into **Groq API key**, and select **Save and test key**. Demo sign-in, route comparisons, exports and Cinema require no API key. It is held in browser session storage, scoped to the account and tab. On a shared computer, sign out when finished.
+3. Open **Settings** to select the theme, ambient motion, notification preferences and mascot visibility. For Capi chat, get a key from the [Groq Console](https://console.groq.com/keys), enter it under **Groq API key**, and select **Save and test key**. Your key is stored in the browser session for that tab. Demo sign-in, route comparisons, exports and Cinema require no key.
 4. Open **Profile** to change your display name, avatar, role or bio. Signing out ends the server session. Demo workspaces are disposable.
 5. **Sample route** supports a Three.js viewport and synchronized cinema player. West 112th Street features four supplied assets and a 12-second curbside arrival film. See [model integration](models/README.md) and [cinema integration](media/README.md).
 
@@ -114,8 +114,19 @@ The local release check passed **22 automated tests**. The suite exercises routi
 | Creativity · 15% | Delay-aware routing compares the same outings under the same traffic draws. Capi also appears in the route studio |
 | Presentation · 10% | Record a separate narrated pitch with problem, live demo, measured results and next steps |
 
-The technical-track gate requires **at least 90% Python** in the final GitHub language bar. This build is approximately **81% Python by tracked authored Python, CSS and JavaScript bytes**, with vendored Three.js excluded. The current build is below the gate. Check the final GitHub bar before submitting.
-
 Add the public GitHub URL, a runnable ZIP or deployed build, and the narrated video pitch to Devpost. The 12-second Cinema clip is an in-app showcase. The supplied rubric lists the deadline as **November 21, 2026 at 5:00 p.m. CST**.
 
-Three.js r160 and its glTF loader are bundled locally under the MIT license in `vendor/three/LICENSE`. Locally hosted assets avoid sending account or API-key information to an external script provider. Groq receives requests only when the user tests a key or sends a chat message.
+## AI disclosure and credits
+
+**AI-assisted development.** I used OpenAI ChatGPT and Codex to help write and revise code, draft app copy and documentation, and build and refine the route-film rendering workflow. The benchmark numbers come from running the Python simulation.
+
+**Capi chat.** Capi generates replies through the [Groq API](https://console.groq.com/keys) using a key you provide in Settings. The browser sends requests to Groq when you test a key or send a chat message.
+
+**3D models used in Interactive 3D and Cinema**
+
+- [FREE - SkyBox Basic Sky](https://sketchfab.com/3d-models/free-skybox-basic-sky-b2a4fd1b92c248abaae31975c9ea79e2) by Paul, licensed under [CC Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+- [2025 Ford Transit Courier Trend 1.5](https://sketchfab.com/3d-models/2025-ford-transit-courier-trend-15-391f0e08a9af4a388a669433c55a7dd9) by Ddiaz Design, licensed under [CC Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+- [Street](https://skfb.ly/pNKvT) by Pasha, licensed under [CC Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+- [Capybara](https://skfb.ly/p8zGv) by dylantneal, licensed under [CC Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+The assets were scaled, positioned, lit and animated for the showcase. The adapted showcase is shared under [CC Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See the [asset file list](models/README.md) and the [Three.js MIT license](vendor/three/LICENSE).
