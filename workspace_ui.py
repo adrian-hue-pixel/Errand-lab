@@ -38,7 +38,7 @@ def shell(title,current,content,session,bare):
 <p>Ask about your route, deadlines, or the benchmark.</p><div id="messages" role="log" aria-live="polite"></div>
 <div class="starters"><button>Explain this route</button><button>How does traffic affect my chances?</button></div>
 <form id="chat-form"><label for="chat-input">Message Capi</label><textarea id="chat-input" maxlength="1800" rows="2" required></textarea><button class="button primary">Send message ↗</button></form>
-<a href="/settings">Manage Groq key</a></dialog>
+<a href="/settings">Manage OpenRouter key</a></dialog>
 <script src="/motion.js" defer></script><script src="/workspace.js" defer></script></body></html>'''
 
 
@@ -66,8 +66,8 @@ def gate(session,signup,target,error,username):
 
 def settings():
     return '''<div class="pagehead"><h1>Settings</h1><p>Choose how your workspace looks and how Capi connects.</p></div>
-<section class="card prefs"><h2>Groq connection</h2><p>The key stays in this browser tab for this account. Testing the key contacts Groq. Chat sends your message, recent conversation, and any visible result metrics directly to Groq.</p>
-<label for="api-key">Groq API key</label><div class="actions"><input id="api-key" type="password" autocomplete="off" spellcheck="false"><button id="reveal-key" class="button quiet">Show</button></div>
+<section class="card prefs"><h2>OpenRouter connection</h2><p>The key stays in this browser tab for this account. Testing the key contacts OpenRouter. Chat sends your message, recent conversation, and any visible result metrics directly to OpenRouter.</p>
+<label for="api-key">OpenRouter API key</label><div class="actions"><input id="api-key" type="password" autocomplete="off" spellcheck="false"><button id="reveal-key" class="button quiet">Show</button></div>
 <div class="actions"><button id="check-key" class="button primary">Save and test key</button><button id="forget-key" class="button quiet">Remove key</button></div>
 <output id="key-status" aria-live="polite"></output></section>
 <section class="card prefs"><h2>Workspace preferences</h2>
