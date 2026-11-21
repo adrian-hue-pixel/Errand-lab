@@ -7,7 +7,7 @@ from pathlib import Path
 import streamlit as st
 
 from routing import POLICIES, PRESETS, TRAFFIC, Plan, Stop, analyze, preset
-from streamlit_ui import apply_theme, entry_art, heading, wordmark
+from streamlit_ui import FILM, apply_theme, heading, masthead, overview
 
 ROOT = Path(__file__).resolve().parent
 
@@ -46,7 +46,8 @@ def planner():
     labels = {name: text[0] for name, text in PRESETS.items()}
     with st.container(key="atlas-setup"):
         scenario_col, count_col = st.columns((2, 1))
-        key = scenario_col.selectbox("Starting itinerary", tuple(labels), format_func=labels.get)
+        key = scenario_col.selectbox("Starting itinerary", tuple(labels), format_func=labels.get,
+                                     key="errand_preset")
         base = preset(key)
         count = count_col.number_input("Number of stops", 2, 6, len(base.stops), 1, key=f"{key}-count")
     with st.form(f"planner-{key}-{count}"):
@@ -109,31 +110,17 @@ def evidence():
 def main():
     st.set_page_config(page_title="ErrandLab", layout="wide")
     apply_theme()
-    if not st.session_state.get("demo_active"):
-        story, access = st.columns((1.25, 1), gap="large", vertical_alignment="center")
-        with story:
-            entry_art()
-        with access, st.container(key="atlas-sign-in"):
-            st.subheader("Welcome to ErrandLab")
-            st.write("Open the demo to plan an outing and compare routes.")
-            if st.button("Demo quick sign-in", type="primary"):
-                st.session_state.demo_active = True
-                st.rerun()
+    section = masthead()
+    if section == "Overview":
+        overview()
         return
-    with st.sidebar:
-        wordmark()
-    section = st.sidebar.radio("Workspace", ("Plan a route", "Research evidence", "Route cinema"))
-    if st.sidebar.button("End demo"):
-        st.session_state.pop("demo_active", None)
-        st.session_state.pop("result", None)
-        st.rerun()
     heading(section)
     if section == "Plan a route":
         planner()
-    elif section == "Research evidence":
+    elif section == "Evidence":
         evidence()
     else:
-        st.video(str(ROOT / "media" / "sample-route.mp4"))
+        st.video(str(FILM))
 
 
 if __name__ == "__main__":
