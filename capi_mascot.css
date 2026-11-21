@@ -1,18 +1,10 @@
-.capi-avatar {
-    --capi-size: 142px;
-    display: grid;
-    justify-items: center;
-    gap: .45rem;
-    text-align: center;
-    margin-inline: auto;
-}
-.st-key-capi-stage .capi-avatar { --capi-size: 168px; }
-.capi-avatar .capi-note {
+.st-key-capi-avatar { text-align: center; }
+.st-key-capi-avatar .capi-note {
     position: relative;
-    margin: 0 0 .3rem;
+    margin: 0 auto .3rem;
     width: fit-content;
 }
-.capi-avatar .capi-note::after {
+.st-key-capi-avatar .capi-note::after {
     content: "";
     position: absolute;
     width: .48rem;
@@ -24,82 +16,33 @@
     border-bottom: 1px solid #d9d1c6;
     transform: rotate(45deg);
 }
-.capi-figure {
-    display: block;
+.st-key-capi-avatar [data-testid="stElementContainer"]:has([data-testid="stImage"]) {
+    align-self: center;
+    margin-inline: auto;
+    width: 100% !important;
+}
+.st-key-capi-avatar [data-testid="stImage"] {
+    width: 100%;
+    display: flex;
+    justify-content: center;
     position: relative;
-    width: var(--capi-size);
-    aspect-ratio: 1.36;
     isolation: isolate;
 }
-.capi-figure span { display: block; position: absolute; }
-.capi-glow { inset: -10% -12% 0; z-index: -1; background: radial-gradient(ellipse, #e4ad7934, transparent 66%); }
-.capi-shadow { left: 16%; right: 12%; bottom: 4%; height: 12%; border-radius: 50%; background: #48281830; filter: blur(4px); }
-.capi-character { inset: 0; transform-origin: center 91%; }
-.capi-body {
-    left: 6%; top: 43%; width: 72%; height: 50%;
-    border-radius: 49% 38% 29% 39% / 58% 54% 39% 41%;
-    background: radial-gradient(ellipse at 25% 19%, #cfaa7b, #a37b52 58%, #775337);
-    box-shadow: inset 0 -5px 7px #733e2940;
+.st-key-capi-avatar [data-testid="stImage"]::before {
+    content: "";
+    position: absolute;
+    inset: -8px calc(50% - 100px) -2px;
+    z-index: -1;
+    background: radial-gradient(ellipse at center, #d28a5427, transparent 68%);
 }
-.capi-paw { bottom: 7%; height: 17%; width: 21%; border-radius: 55% 48% 30% 35%; background: linear-gradient(#b68c61, #805c3e); }
-.capi-paw.back { left: 11%; width: 26%; transform: rotate(-8deg); }
-.capi-paw.front { left: 65%; }
-.capi-paw.near { left: 51%; background: linear-gradient(#bb9465, #805b3c); }
-.capi-scarf {
-    left: 39%; top: 56%; width: 40%; height: 15%;
-    border-radius: 50% 30% 41% 54%;
-    background: linear-gradient(166deg, #db7758, #9d3929 72%);
-    box-shadow: 0 2px 3px #76372842;
-    transform: rotate(7deg);
+.st-key-capi-avatar [data-testid="stImage"] img {
+    display: block;
+    margin-inline: auto;
+    filter: drop-shadow(0 5px 5px #613b2935);
+    transform-origin: 50% 90%;
 }
-.capi-scarf::after {
-    content: ""; position: absolute; width: 30%; height: 120%; top: 61%; left: 16%;
-    border-radius: 20% 24% 80% 26%; transform: rotate(22deg);
-    background: linear-gradient(#c6553d, #913627);
-}
-.capi-head { left: 41%; top: 18%; width: 54%; height: 51%; }
-.capi-face {
-    inset: 0;
-    border-radius: 35% 29% 27% 42% / 53% 37% 45% 47%;
-    background: radial-gradient(ellipse at 29% 18%, #ecd1a3, #ccaa7b 43%, #ac8359 77%, #8e6a4b);
-    box-shadow: inset 0 -4px 4px #94583435, 0 2px 6px #71482b35;
-}
-.capi-shine { width: 26%; height: 12%; left: 17%; top: 9%; border-radius: 50%; background: #fff0cf84; transform: rotate(-18deg); }
-.capi-ear {
-    width: 17%; height: 28%; top: -17%; border-radius: 56% 58% 44% 41%;
-    background: radial-gradient(ellipse at 43% 44%, #b57961 0 41%, #c48a61 49%, #a96947 99%);
-    box-shadow: inset 1px 2px 2px #ffdbad60;
-}
-.capi-ear.left { left: 17%; transform: rotate(-18deg); }
-.capi-ear.right { right: 29%; transform: rotate(16deg) scale(.9); }
-.capi-eyes { left: 30%; right: 22%; top: 28%; height: 12%; transform-origin: center; }
-.capi-eye {
-    background: #33241d; width: 19%; height: 100%;
-    border-radius: 54% 51% 47% 47%;
-}
-.capi-eye::after { content: ""; position: absolute; inset: 15% 37% 49% 28%; border-radius: 50%; background: #fff4dc; }
-.capi-eye.left { left: 0; }
-.capi-eye.right { right: 0; height: 88%; }
-.capi-muzzle {
-    right: -2%; top: 42%; width: 65%; height: 51%;
-    border-radius: 33% 23% 21% 36% / 43% 37% 41% 44%;
-    background: linear-gradient(160deg, #d2b390 20%, #b89775 75%);
-    box-shadow: inset 0 -2px 3px #aa684d40;
-}
-.capi-nose { width: 23%; height: 23%; top: 15%; left: 64%; background: #5a392c; border-radius: 53% 53% 70% 70%; }
-.capi-smile { top: 48%; left: 47%; width: 39%; height: 25%; border: solid #684431; border-width: 0 0 2px; border-radius: 50%; transform: rotate(-8deg); }
-.capi-teeth {
-    top: 70%; left: 62%; width: 19%; height: 46%;
-    border-radius: 1px 1px 3px 3px;
-    background: linear-gradient(90deg, #fff6df 0 46%, #86664c 46% 54%, #fff2d7 54%);
-    box-shadow: 0 1px 2px #653e2855;
-}
-.capi-cheek { left: 19%; top: 48%; width: 16%; height: 13%; border-radius: 50%; transform: rotate(-15deg); background: #d97f7270; }
+.st-key-capi-avatar [data-testid="stImage"] button { display: none; }
 @media (prefers-reduced-motion: no-preference) {
-    .capi-character { animation: capi-idle 4.6s ease-in-out infinite; }
-    .capi-eyes { animation: capi-blink 6s ease-in-out infinite; }
-    .capi-shadow { animation: capi-shadow 4.6s ease-in-out infinite; }
-    @keyframes capi-idle { 50% { transform: translateY(-3px) scaleX(.993) scaleY(1.022); } }
-    @keyframes capi-blink { 0%, 45%, 49%, 100% { transform: scaleY(1); } 47% { transform: scaleY(.08); } }
-    @keyframes capi-shadow { 50% { transform: scaleX(.93); opacity: .8; } }
+    .st-key-capi-avatar [data-testid="stImage"] img { animation: capi-idle 4.6s ease-in-out infinite; }
+    @keyframes capi-idle { 50% { transform: translateY(-2px) scaleY(1.018); } }
 }

@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent
 FILM = ROOT / "media" / "sample-route.mp4"
 THEME = (ROOT / "style.css").read_text(encoding="utf-8") + styles()
 CAPI_CSS = (ROOT / "capi_mascot.css").read_text(encoding="utf-8")
+CAPI_ART = ROOT / "media" / "capi.png"
 SECTIONS = ("Overview", "Plan a route", "Evidence", "Capi chat", "Settings")
 
 CSS = """
@@ -165,27 +166,12 @@ def apply_theme():
 
 
 def mascot(greeting, *, show_name=False):
-    name = '<span class="mascot-name">Capi</span>' if show_name else ""
-    st.html(f"""
-    <div class="capi-avatar">
-        <p class="capi-note">{escape(greeting)}</p>
-        <span class="capi-figure" role="img" aria-label="Capi, a seated capybara with two front teeth and a rust bandanna">
-            <span class="capi-glow"></span><span class="capi-shadow"></span>
-            <span class="capi-character">
-                <span class="capi-body"></span>
-                <span class="capi-paw back"></span><span class="capi-paw front"></span><span class="capi-paw near"></span>
-                <span class="capi-scarf"></span>
-                <span class="capi-head">
-                    <span class="capi-ear left"></span><span class="capi-ear right"></span>
-                    <span class="capi-face"></span><span class="capi-shine"></span><span class="capi-cheek"></span>
-                    <span class="capi-eyes"><span class="capi-eye left"></span><span class="capi-eye right"></span></span>
-                    <span class="capi-muzzle"><span class="capi-nose"></span><span class="capi-smile"></span><span class="capi-teeth"></span></span>
-                </span>
-            </span>
-        </span>
-        {name}
-    </div>
-    """)
+    with st.container(key="capi-avatar"):
+        st.html(f'<p class="capi-note">{escape(greeting)}</p>')
+        st.image(str(CAPI_ART), width=151 if show_name else 124)
+        if show_name:
+            st.html('<span class="mascot-name">Capi</span>')
+
 
 def wordmark():
     st.html('<div class="brand"><span class="atlas-mark" aria-hidden="true">↗</span>ErrandLab</div>')
