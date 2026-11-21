@@ -15,7 +15,7 @@
   <img alt="Routing" src="https://img.shields.io/badge/ROUTING-STDLIB%20ONLY-2DD4BF?style=for-the-badge&labelColor=555555">
   <img alt="3D" src="https://img.shields.io/badge/3D%20SHOWCASE-THREE.JS-111111?style=for-the-badge&logo=threedotjs&logoColor=white&labelColor=555555">
   <img alt="Storage" src="https://img.shields.io/badge/STORAGE-SQLITE-0F80C1?style=for-the-badge&logo=sqlite&logoColor=white&labelColor=555555">
-  <img alt="Chat" src="https://img.shields.io/badge/CAPI%20CHAT-GROQ-F55036?style=for-the-badge&labelColor=555555">
+  <img alt="Chat" src="https://img.shields.io/badge/CAPI%20CHAT-OPENROUTER-6B5CE7?style=for-the-badge&labelColor=555555">
 </p>
 <p align="center">
   <img alt="Security" src="https://img.shields.io/badge/AUTH-PBKDF2%20%2B%20CSRF-8B5CF6?style=for-the-badge&labelColor=555555">
@@ -43,13 +43,13 @@ Open the [hosted ErrandLab app](https://errand-lab.streamlit.app/) to plan a rou
 
 Create the hosted app from this repository and set **Main file path** to `streamlit_app.py`. Use Python 3.12 or 3.13 if configuring a version. The hosted demo includes the route planner, comparison downloads, evidence, the Overview route film and Capi chat. The local WSGI app includes the account workspace and interactive 3D.
 
-To enable Groq in the hosted app, add this to **App settings → Secrets**:
+To enable Capi’s OpenRouter model classification in the hosted app, create an API key at [OpenRouter](https://openrouter.ai/settings/keys) and add this to **App settings → Secrets**:
 
 ```toml
-GROQ_API_KEY = "your-groq-key"
+OPENROUTER_API_KEY = "your-openrouter-key"
 ```
 
-The server uses that key to classify questions. Visitors can use Capi directly. Without a key, hosted Capi still offers built-in ErrandLab guidance.
+The server uses that key to classify questions with [NVIDIA Nemotron 3 Ultra 550B (free)](https://openrouter.ai/nvidia/nemotron-3-ultra-550b-a55b:free?view=api). Visitors can use Capi directly. Without a key, hosted Capi still offers built-in ErrandLab guidance. OpenRouter’s free model variants are rate limited (currently 20 requests/minute and 50/day); provider availability and limits can change. Don’t send sensitive personal information in chat.
 
 ### Optional local setup
 
@@ -70,7 +70,7 @@ Open [ErrandLab on port 8501](http://127.0.0.1:8501). On Windows, use `py -3 app
 
 1. Sign in with your email and password, create an account, or use **Demo quick sign-in** for an isolated temporary workspace. Existing username accounts can still sign in.
 2. Open **Plan a route**, choose Closing time, and compare strategies. Save completed runs to your account.
-3. Open **Settings** to select the theme, ambient motion, notification preferences and mascot visibility. For Capi chat, get a key from the [Groq Console](https://console.groq.com/keys), enter it under **Groq API key**, and select **Save and test key**. Your key is stored in the browser session for that tab. Demo sign-in, route comparisons, exports and Cinema require no key.
+3. Open **Settings** to select the theme, ambient motion, notification preferences and mascot visibility. For Capi chat, get an API key from [OpenRouter](https://openrouter.ai/settings/keys), enter it under **OpenRouter API key**, and select **Save and test key**. Your key is stored in the browser session for that tab. Chat sends your question and recent conversation to OpenRouter; local route metrics may also be sent when chatting from a route results page. Demo sign-in, route comparisons, exports and Cinema require no key.
 4. Open **Profile** to change your display name, avatar, role or bio. Signing out ends the server session. Demo workspaces are disposable.
 5. **Sample route** supports a Three.js viewport and synchronized cinema player. West 112th Street features four supplied assets and a 12-second curbside arrival film. See [model integration](models/README.md) and [cinema integration](media/README.md).
 
@@ -215,7 +215,7 @@ Add the public GitHub URL, a runnable ZIP or deployed build, and the narrated vi
 
 **AI-assisted development.** I used OpenAI ChatGPT and Codex to help write and revise code, draft app copy and documentation, and build and refine the route-film rendering workflow. The benchmark numbers come from running the Python simulation.
 
-**Capi chat.** The hosted app uses the operator’s [Groq API key](https://console.groq.com/keys) to match questions to ErrandLab guidance. The hosted app sends the question to Groq. It keeps route results on the app server. The local WSGI app uses its own browser-session key setup.
+**Capi chat.** The hosted app uses the operator’s [OpenRouter API key](https://openrouter.ai/settings/keys) to classify questions with [NVIDIA Nemotron 3 Ultra 550B (free)](https://openrouter.ai/nvidia/nemotron-3-ultra-550b-a55b:free?view=api); the app then returns its grounded ErrandLab guidance. The hosted app sends the question to OpenRouter and keeps route results on the app server. The local WSGI app uses its own browser-session key setup and sends the recent conversation and visible route metrics to OpenRouter.
 
 **3D models used in Interactive 3D and Cinema**
 
