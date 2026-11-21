@@ -65,7 +65,7 @@ CSS = """
     display: flex;
     justify-content: center;
 }
-.st-key-errand-masthead [data-testid="stButtonGroup"] [role="group"] {
+.st-key-errand-masthead [data-testid="stButtonGroup"] [role="radiogroup"] {
     display: flex; flex-wrap: wrap; gap: 4px;
     padding: 5px; border-radius: 17px; border: 1px solid #dedbd1;
     background: #fdfbf6dc; box-shadow: 0 7px 22px #3427190d;
@@ -79,7 +79,7 @@ CSS = """
     color: inherit; font-weight: 650; font-size: .85rem;
 }
 .st-key-errand-masthead [data-testid="stButtonGroup"] button:hover { color: var(--accent); background: #f4ebe2; }
-.st-key-errand-masthead [data-testid="stButtonGroup"] button:is([aria-pressed="true"], [data-testid="stBaseButton-pillsActive"]) {
+.st-key-errand-masthead [data-testid="stButtonGroup"] button[aria-checked="true"] {
     background: var(--ink); color: #fffdf7; box-shadow: 0 2px 5px #35261b35;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -237,8 +237,9 @@ def masthead():
         with brand:
             wordmark()
         with menu:
+            if st.session_state.get("errand_section") not in SECTIONS:
+                st.session_state.errand_section = "Overview"
             choice = st.segmented_control("Main navigation", SECTIONS, key="errand_section",
-                                          default=None if "errand_section" in st.session_state else "Overview",
                                           label_visibility="collapsed", on_change=navigate)
             section = choice or "Overview"
         with account:
