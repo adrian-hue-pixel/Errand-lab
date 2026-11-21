@@ -8,7 +8,7 @@ import re
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
-from capi import PROMPTS, answer, groq_topic, local_topic
+from capi import PROMPTS, answer, openrouter_topic, local_topic
 
 from layout import styles
 from routing import PRESETS, RESEARCH, analyze, preset
@@ -327,20 +327,20 @@ def save_appearance(preference, widget_key):
     st.session_state[preference] = st.session_state[widget_key]
 
 
-def hosted_groq_key():
+def hosted_openrouter_key():
     """Read the deployment credential without putting it in widget state."""
     try:
-        value = st.secrets.get("GROQ_API_KEY", "")
+        value = st.secrets.get("OPENROUTER_API_KEY", "")
     except StreamlitSecretNotFoundError:
         value = ""
     if isinstance(value, str) and value.strip():
         return value.strip()
     # Keep environment variables as a local-development fallback. In Streamlit
     # Cloud, the explicitly configured secret must win over a stale env value.
-    return os.environ.get("GROQ_API_KEY", "").strip()
+    return os.environ.get("OPENROUTER_API_KEY", "").strip()
 
 
-def groq_error_detail(error):
+def provider_error_detail(error):
     """Return a short provider diagnostic without ever echoing a credential."""
     try:
         payload = json.loads(error.read().decode("utf-8", "replace"))
@@ -349,19 +349,19 @@ def groq_error_detail(error):
         message = ""
     if not isinstance(message, str):
         return ""
-    message = re.sub(r"gsk_[A-Za-z0-9_-]+", "[redacted]", message)
+    message = re.sub(r"(?:sk-or-v1-|sk-or-|gsk_)[A-Za-z0-9_-]+", "[redacted]", message)
     return message[:240].strip()
 
 
 def capi_chat():
     from urllib.error import HTTPError, URLError
 
-    key = hosted_groq_key()
+    key = hosted_openrouter_key()
     result = st.session_state.get("result")
     with st.container(key="capi-intro"):
         heading("Capi chat")
     with st.container(key="capi-status"):
-        st.write("ErrandLab questions only. Capi uses Groq to match questions to app guidance." if key else
+        st.write("ErrandLab questions only. Capi uses OpenRouter to match questions to app guidance." if key else
                  "Built-in ErrandLab guidance is ready.")
     context, companion = st.columns((1.45, 1), gap="large")
     with context, st.container(key="capi-context"):
@@ -406,30 +406,30 @@ def capi_chat():
             topic = local_topic(question)
             with st.chat_message("assistant"):
                 # Use deterministic in-app routing for clear ErrandLab questions;
-                # call Groq only when local routing cannot identify the topic.
+                # call OpenRouter only when local routing cannot identify the topic.
                 if key and topic is None:
                     try:
                         with st.spinner("Capi is thinking…"):
-                            topic = groq_topic(question, key)
+                            topic = openrouter_topic(question, key)
                     except HTTPError as error:
-                        provider_detail = groq_error_detail(error)
+                        provider_detail = provider_error_detail(error)
                         if error.code == 401:
-                            detail = "Groq did not accept the configured key (HTTP 401). Replace GROQ_API_KEY in Streamlit Secrets with a fresh key."
+                            detail = "OpenRouter did not accept the configured key (HTTP 401). Replace OPENROUTER_API_KEY in Streamlit Secrets with a valid key."
                         elif error.code == 403:
-                            detail = "Groq returned HTTP 403. Check the key’s project and model access."
+                            detail = "OpenRouter or its selected provider denied this request (HTTP 403). Check the API key and model availability."
                         elif error.code == 429:
-                            detail = "Groq rate limit or quota reached (HTTP 429). Check your Groq account limits."
+                            detail = "OpenRouter or the free model reached its request limit (HTTP 429). Try again later."
                         elif error.code in (400, 404):
-                            detail = f"Groq rejected the request (HTTP {error.code}). The key reached Groq, but the model/request needs attention."
+                            detail = f"OpenRouter rejected the request (HTTP {error.code}). Check that the model is available."
                         else:
-                            detail = f"Groq returned HTTP {error.code}. Try again shortly."
+                            detail = f"OpenRouter returned HTTP {error.code}. Try again shortly."
                         if provider_detail:
-                            detail += " Groq says: " + provider_detail
+                            detail += " Provider says: " + provider_detail
                         st.caption(detail + " Built-in guidance is shown below.")
                     except URLError:
-                        st.caption("Could not reach Groq (network or timeout). Built-in guidance is shown below.")
+                        st.caption("Could not reach OpenRouter (network or timeout). Built-in guidance is shown below.")
                     except (OSError, ValueError, TypeError, AttributeError, KeyError, IndexError):
-                        st.caption("Groq returned an invalid response. Built-in guidance is shown below.")
+                        st.caption("OpenRouter returned an invalid response. Built-in guidance is shown below.")
                 reply = answer(topic, result)
                 st.markdown(reply)
             messages.extend((("user", question), ("assistant", reply)))
