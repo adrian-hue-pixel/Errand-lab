@@ -1,1 +1,2 @@
-# Python 3.10 or newer. ErrandLab uses only the standard library.
+# The local WSGI application uses the standard library.
+streamlit>=1.52,<2

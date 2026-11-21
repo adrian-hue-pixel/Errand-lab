@@ -17,6 +17,7 @@ POLICIES = {
 }
 TRAIN_DAYS = 48
 TEST_DAYS = 600
+TAIL_WEIGHT = 0.35
 TRAIN_SEED = 7427
 TEST_SEED = 86741
 MINUTES_PER_KM = 6
@@ -127,10 +128,12 @@ def travel_matrix(plan):
     ) for a in coords)
 
 
-def traffic_draws(matrix, traffic, n, seed):
+def traffic_draws(matrix, traffic, n, seed, *, spread=1.0):
     """Mean-one lognormal multipliers, with shared daily and independent leg effects."""
     rng = random.Random(seed)
     day_sigma, leg_sigma = TRAFFIC[traffic]
+    day_sigma *= spread
+    leg_sigma *= spread
     size = len(matrix)
     for _ in range(n):
         shared = math.exp(rng.gauss(0, day_sigma) - day_sigma**2/2)
@@ -188,10 +191,16 @@ def success(outcome, count):
 
 
 def choose_orders(plan, matrix):
-    train = tuple(traffic_draws(matrix, plan.traffic, TRAIN_DAYS, TRAIN_SEED))
+    return choose_weighted_orders(plan, matrix, (TAIL_WEIGHT,))[TAIL_WEIGHT]
+
+
+def choose_weighted_orders(plan, matrix, weights, *, spread=1.0, seed=TRAIN_SEED):
+    """Compare tail weights against the same training days and candidate orders."""
+    train = tuple(traffic_draws(matrix, plan.traffic, TRAIN_DAYS, seed, spread=spread))
     n = len(plan.stops)
-    best_robust = best_nominal = None
-    robust_order = nominal_order = ()
+    best_nominal = None
+    robust = {}
+    nominal_order = ()
     for order in permutations(range(n)):
         result = simulate(plan, order, matrix)
         score_nominal = (result.points - 2 * (not result.on_time), -result.elapsed)
@@ -200,17 +209,18 @@ def choose_orders(plan, matrix):
         outcomes = [simulate(plan, order, day) for day in train]
         utility = sorted(out.points - 2 * (not out.on_time) for out in outcomes)
         tail = utility[: len(utility) // 5]
-        score_robust = (
-            statistics.fmean(utility) + 0.35 * statistics.fmean(tail),
+        mean = statistics.fmean(utility)
+        downside = statistics.fmean(tail)
+        tie_break = (
             sum(success(out, n) for out in outcomes),
             -statistics.fmean(out.elapsed for out in outcomes),
         )
-        if best_robust is None or score_robust > best_robust:
-            best_robust, robust_order = score_robust, order
-    return {
-        "robust": robust_order, "nominal": nominal_order,
-        "nearest": nearest_order(matrix), "listed": tuple(range(n)),
-    }
+        for weight in weights:
+            score = (mean + weight * downside, *tie_break)
+            if weight not in robust or score > robust[weight][0]:
+                robust[weight] = (score, order)
+    baselines = {"nominal": nominal_order, "nearest": nearest_order(matrix), "listed": tuple(range(n))}
+    return {weight: {**baselines, "robust": robust[weight][1]} for weight in weights}
 
 
 def paired_interval(differences, seed=3127):
