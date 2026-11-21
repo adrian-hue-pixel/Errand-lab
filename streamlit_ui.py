@@ -390,13 +390,17 @@ def capi_chat():
                 st.text(question)
             topic = local_topic(question)
             with st.chat_message("assistant"):
-                if key and question not in PROMPTS:
+                # Use deterministic in-app routing for clear ErrandLab questions;
+                # call Groq only when local routing cannot identify the topic.
+                if key and topic is None:
                     try:
                         with st.spinner("Capi is thinking…"):
                             topic = groq_topic(question, key)
                     except HTTPError as error:
-                        if error.code in (401, 403):
-                            detail = f"Groq rejected the configured API key (HTTP {error.code}). Check the value saved in Streamlit Secrets."
+                        if error.code == 401:
+                            detail = "Groq did not accept the configured key (HTTP 401). Replace GROQ_API_KEY in Streamlit Secrets with a fresh key."
+                        elif error.code == 403:
+                            detail = "Groq returned HTTP 403. The key’s project may not have access to the selected model; check model access for the same project that created the key."
                         elif error.code == 429:
                             detail = "Groq rate limit or quota reached (HTTP 429). Check your Groq account limits."
                         elif error.code in (400, 404):
