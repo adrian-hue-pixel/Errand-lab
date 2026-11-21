@@ -71,6 +71,7 @@ CSS = """
 [data-testid="stBaseButton-primary"] {
     border-radius: 12px; background: var(--ink); color: white; border-color: var(--ink);
 }
+[data-testid="stBaseButton-primary"] p { color: inherit; font-weight: 650; }
 [data-testid="stBaseButton-primary"]:is(:hover,:focus-visible) {
     background: #3a322a; color: white;
 }
@@ -111,17 +112,19 @@ def go(section):
     st.session_state.errand_section = section
 
 
+def navigate():
+    if st.session_state.errand_section != "Overview":
+        st.session_state.demo_active = True
+
+
 def masthead():
     with st.container(key="errand-masthead"):
         brand, menu, account = st.columns((2, 6, 2), vertical_alignment="center")
         with brand:
             wordmark()
         with menu:
-            if st.session_state.get("demo_active"):
-                section = st.radio("Main navigation", SECTIONS, horizontal=True,
-                                   key="errand_section", label_visibility="collapsed")
-            else:
-                section = "Overview"
+            section = st.radio("Main navigation", SECTIONS, horizontal=True, key="errand_section",
+                               label_visibility="collapsed", on_change=navigate)
         with account:
             if st.session_state.get("demo_active"):
                 if st.button("Sign out"):
