@@ -327,14 +327,15 @@ def save_appearance(preference, widget_key):
 
 def hosted_groq_key():
     """Read the deployment credential without putting it in widget state."""
-    key = os.environ.get("GROQ_API_KEY", "").strip()
-    if key:
-        return key
     try:
         value = st.secrets.get("GROQ_API_KEY", "")
     except StreamlitSecretNotFoundError:
-        return ""
-    return value.strip() if isinstance(value, str) else ""
+        value = ""
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    # Keep environment variables as a local-development fallback. In Streamlit
+    # Cloud, the explicitly configured secret must win over a stale env value.
+    return os.environ.get("GROQ_API_KEY", "").strip()
 
 
 def capi_chat():
