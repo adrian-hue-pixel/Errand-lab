@@ -41,7 +41,11 @@
     filter: drop-shadow(0 5px 5px #613b2935);
     transform-origin: 50% 90%;
 }
-.st-key-capi-avatar [data-testid="stImage"] button { display: none; }
+.st-key-capi-avatar [data-testid="stFullScreenFrame"]:has([data-testid="stImage"]) {
+    display: flex;
+    justify-content: center;
+}
+.st-key-capi-avatar [data-testid="stFullScreenFrame"] button { display: none; }
 @media (prefers-reduced-motion: no-preference) {
     .st-key-capi-avatar [data-testid="stImage"] img { animation: capi-idle 4.6s ease-in-out infinite; }
     @keyframes capi-idle { 50% { transform: translateY(-2px) scaleY(1.018); } }
