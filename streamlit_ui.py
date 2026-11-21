@@ -339,7 +339,7 @@ def hosted_groq_key():
 
 
 def capi_chat():
-    from urllib.error import URLError
+    from urllib.error import HTTPError, URLError
 
     key = hosted_groq_key()
     result = st.session_state.get("result")
@@ -394,8 +394,20 @@ def capi_chat():
                     try:
                         with st.spinner("Capi is thinking…"):
                             topic = groq_topic(question, key)
-                    except (OSError, URLError, ValueError, TypeError, AttributeError, KeyError, IndexError):
-                        st.caption("Groq is unavailable. Using built-in ErrandLab guidance.")
+                    except HTTPError as error:
+                        if error.code in (401, 403):
+                            detail = f"Groq rejected the configured API key (HTTP {error.code}). Check the value saved in Streamlit Secrets."
+                        elif error.code == 429:
+                            detail = "Groq rate limit or quota reached (HTTP 429). Check your Groq account limits."
+                        elif error.code in (400, 404):
+                            detail = f"Groq rejected the request (HTTP {error.code}). The key reached Groq, but the model/request needs attention."
+                        else:
+                            detail = f"Groq returned HTTP {error.code}. Try again shortly."
+                        st.caption(detail + " Built-in guidance is shown below.")
+                    except URLError:
+                        st.caption("Could not reach Groq (network or timeout). Built-in guidance is shown below.")
+                    except (OSError, ValueError, TypeError, AttributeError, KeyError, IndexError):
+                        st.caption("Groq returned an invalid response. Built-in guidance is shown below.")
                 reply = answer(topic, result)
                 st.markdown(reply)
             messages.extend((("user", question), ("assistant", reply)))
