@@ -132,7 +132,7 @@ def send(start_response, content="", status=200, mime="text/html; charset=utf-8"
         ("Content-Type", mime), ("Content-Length", str(len(encoded))), ("Cache-Control", "no-store"),
         ("X-Content-Type-Options", "nosniff"), ("Referrer-Policy", "no-referrer"), ("X-Frame-Options", "DENY"),
         ("Content-Security-Policy",
-         "default-src 'none'; connect-src 'self' blob: https://api.groq.com; img-src 'self' blob: data:; media-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"),
+         "default-src 'none'; connect-src 'self' blob: https://openrouter.ai; img-src 'self' blob: data:; media-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"),
     ]
     if cookie:
         common.append(("Set-Cookie", cookie))
