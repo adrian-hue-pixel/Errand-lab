@@ -117,7 +117,7 @@
       const details=location.pathname.startsWith('/run/')?document.querySelector('.metrics')?.innerText:'';
       const res=await fetch(groq+'/chat/completions',{method:'POST',signal:controller.signal,credentials:'omit',redirect:'error',
         headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},
-        body:JSON.stringify({model:'llama-3.3-70b-versatile',stream:true,max_completion_tokens:420,
+        body:JSON.stringify({model:'openai/gpt-oss-20b',stream:true,max_completion_tokens:420,
           messages:[{role:'system',content:'You are Capi, a concise, calm route-planning capybara. Help users understand errands, time windows and simulation uncertainty. You cannot edit their account or plan. Distinguish estimates from observed trips. Current page: '+document.title+'. Route metrics: '+(details||'none supplied')},...history.slice(-8),{role:'user',content:question}]})});
       if(!res.ok) throw new Error(reason(res.status));
       await stream(res,text=>{mascot('speaking');result+=text;answer.textContent=result;messages.scrollTop=messages.scrollHeight;});
