@@ -1,4 +1,5 @@
 """Presentation for the original ErrandLab interface on Streamlit."""
+from html import escape
 from pathlib import Path
 
 import streamlit as st
@@ -11,7 +12,7 @@ from routing import PRESETS, RESEARCH, analyze, preset
 ROOT = Path(__file__).resolve().parent
 FILM = ROOT / "media" / "sample-route.mp4"
 THEME = (ROOT / "style.css").read_text(encoding="utf-8") + styles()
-CAPI_ART = ROOT / "media" / "capi-sitting.png"
+CAPI_CSS = (ROOT / "capi_mascot.css").read_text(encoding="utf-8")
 SECTIONS = ("Overview", "Plan a route", "Evidence", "Capi chat", "Settings")
 
 CSS = """
@@ -86,7 +87,6 @@ CSS = """
     outline: 3px solid var(--accent); outline-offset: 2px;
 }
 [data-testid="stMainBlockContainer"] .st-key-overview-capi { text-align: center; }
-.st-key-overview-capi [data-testid="stImage"] { display: flex; justify-content: center; }
 .st-key-overview-capi .capi-note {
     display: inline-block; padding: .45rem .9rem; background: var(--paper);
     border: 1px solid var(--line); border-radius: 15px; color: var(--tone); font-size: .85rem;
@@ -124,7 +124,6 @@ CSS = """
     background: radial-gradient(ellipse at 50% 67%, #f3c4a7 0%, transparent 55%),
         linear-gradient(#fff4e7 73%, #eac5a8 73%, #f3dbbe);
 }
-.st-key-capi-stage [data-testid="stImage"] { display: flex; justify-content: center; }
 .st-key-capi-stage .capi-note {
     display: inline-block; background: var(--paper); padding: .45rem .9rem;
     border: 1px solid #e4c8b4; border-radius: 14px; font-size: .84rem; color: var(--ink);
@@ -140,13 +139,6 @@ CSS = """
 .lift-bar { position:absolute; top:2px; bottom:2px; border-radius:7px; background: #ac3921; }
 .lift-bar.negative { background:#756451; }
 .lift-row strong { text-align: right; font-variant-numeric: tabular-nums; }
-@media (prefers-reduced-motion: no-preference) {
-    .stApp:not(:has(.motion-off)) :is(.st-key-overview-capi,.st-key-capi-stage) [data-testid="stImage"] img {
-        animation: capi-breathe 4s ease-in-out infinite;
-        transform-origin: center bottom;
-    }
-    @keyframes capi-breathe { 50% { transform: translateY(-3px) scaleY(1.035); } }
-}
 .stApp:has(.motion-off) *, .stApp:has(.motion-off) *::before, .stApp:has(.motion-off) *::after {
     animation: none !important; transition: none !important;
 }
@@ -169,8 +161,31 @@ CSS = """
 
 def apply_theme():
     marker = '<span class="motion-off" hidden></span>' if not st.session_state.get("errand_motion", True) else ""
-    st.html(f"<style>{THEME}{CSS}</style>{marker}")
+    st.html(f"<style>{THEME}{CSS}{CAPI_CSS}</style>{marker}")
 
+
+def mascot(greeting, *, show_name=False):
+    name = '<span class="mascot-name">Capi</span>' if show_name else ""
+    st.html(f"""
+    <div class="capi-avatar">
+        <p class="capi-note">{escape(greeting)}</p>
+        <span class="capi-figure" role="img" aria-label="Capi, a seated capybara with a rust bandanna">
+            <span class="capi-glow"></span><span class="capi-shadow"></span>
+            <span class="capi-character">
+                <span class="capi-body"></span>
+                <span class="capi-paw back"></span><span class="capi-paw front"></span><span class="capi-paw near"></span>
+                <span class="capi-scarf"></span>
+                <span class="capi-head">
+                    <span class="capi-ear left"></span><span class="capi-ear right"></span>
+                    <span class="capi-face"></span><span class="capi-shine"></span><span class="capi-cheek"></span>
+                    <span class="capi-eyes"><span class="capi-eye left"></span><span class="capi-eye right"></span></span>
+                    <span class="capi-muzzle"><span class="capi-nose"></span><span class="capi-smile"></span></span>
+                </span>
+            </span>
+        </span>
+        {name}
+    </div>
+    """)
 
 def wordmark():
     st.html('<div class="brand"><span class="atlas-mark" aria-hidden="true">↗</span>ErrandLab</div>')
@@ -209,8 +224,7 @@ def overview():
     with st.container(key="old-hero"):
         if st.session_state.get("errand_mascot", True):
             with st.container(key="overview-capi"):
-                st.html('<span class="capi-note">Hi, I’m Capi. Ready to head out?</span>')
-                st.image(str(CAPI_ART), width=122)
+                mascot("Hi, I’m Capi. Ready to head out?")
         st.html("""<section class="hero"><div class="hero-copy">
             <h1>Make the stops.<br><em>Beat the clock.</em></h1>
             <p class="lede">Find the best order for your errands, even when traffic changes and shops are about to close.</p>
@@ -321,9 +335,7 @@ def capi_chat():
             st.button("Open the planner", on_click=go, args=("Plan a route",))
     if st.session_state.get("errand_mascot", True):
         with companion, st.container(key="capi-stage"):
-            st.html('<span class="capi-note">Ask me what to do next.</span>')
-            st.image(str(CAPI_ART), width=150)
-            st.html('<span class="mascot-name">Capi</span>')
+            mascot("Ask me what to do next.", show_name=True)
     messages = st.session_state.setdefault("capi_messages", [])
     with st.container(key="capi-transcript"):
         title, clear = st.columns((3, 1))
