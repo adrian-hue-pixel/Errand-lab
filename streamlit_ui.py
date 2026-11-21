@@ -312,16 +312,17 @@ def heading(section):
 def settings():
     with st.container(key="capi-settings"):
         st.subheader("Appearance")
-        if st.toggle("Show Capi illustrations", value=st.session_state.get("errand_mascot", True)):
-            st.session_state.errand_mascot = True
-        else:
-            st.session_state.errand_mascot = False
+        controls = (("Show Capi illustrations", "errand_mascot"),
+                    ("Decorative motion", "errand_motion"))
+        for label, preference in controls:
+            widget_key = f"_{preference}"
+            if widget_key not in st.session_state:
+                st.session_state[widget_key] = st.session_state.get(preference, True)
+            st.toggle(label, key=widget_key, on_change=save_appearance, args=(preference, widget_key))
 
-        def update_motion():
-            st.session_state.errand_motion = st.session_state.motion_setting
 
-        st.toggle("Decorative motion", value=st.session_state.get("errand_motion", True),
-                  key="motion_setting", on_change=update_motion)
+def save_appearance(preference, widget_key):
+    st.session_state[preference] = st.session_state[widget_key]
 
 
 def hosted_groq_key():
