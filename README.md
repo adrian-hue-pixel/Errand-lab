@@ -6,11 +6,19 @@ ErrandLab helps people who combine several stops into one outing. Enter two to s
 
 ## Try ErrandLab online
 
-Public Streamlit URL pending. Once the hosted app is available, open it in your browser and choose **Demo quick sign-in**. You can use the planner and read the results below without installing Python or running the benchmark yourself.
+Open the [hosted ErrandLab app](https://errand-lab.streamlit.app/) to plan a route, explore the evidence, or chat with Capi. You can use it directly in your browser.
 
 ### Deploy on Streamlit Community Cloud
 
-Create the hosted app from this repository and set **Main file path** to `streamlit_app.py`. Use Python 3.12 or 3.13 if configuring a version. The hosted demo includes the route planner, comparison downloads, evidence and Cinema. The full account workspace, interactive 3D and optional Capi chat are available in the local WSGI app.
+Create the hosted app from this repository and set **Main file path** to `streamlit_app.py`. Use Python 3.12 or 3.13 if configuring a version. The hosted demo includes the route planner, comparison downloads, evidence, the Overview route film and Capi chat. The local WSGI app includes the account workspace and interactive 3D.
+
+To enable Groq in the hosted app, add this to **App settings → Secrets**:
+
+```toml
+GROQ_API_KEY = "your-groq-key"
+```
+
+The server uses that key to classify questions. Visitors can use Capi directly. Without a key, hosted Capi still offers built-in ErrandLab guidance.
 
 ### Optional local setup
 
@@ -176,7 +184,7 @@ Add the public GitHub URL, a runnable ZIP or deployed build, and the narrated vi
 
 **AI-assisted development.** I used OpenAI ChatGPT and Codex to help write and revise code, draft app copy and documentation, and build and refine the route-film rendering workflow. The benchmark numbers come from running the Python simulation.
 
-**Capi chat.** Capi generates replies through the [Groq API](https://console.groq.com/keys) using a key you provide in Settings. The browser sends requests to Groq when you test a key or send a chat message.
+**Capi chat.** The hosted app uses the operator’s [Groq API key](https://console.groq.com/keys) to match questions to ErrandLab guidance. The hosted app sends the question to Groq. It keeps route results on the app server. The local WSGI app uses its own browser-session key setup.
 
 **3D models used in Interactive 3D and Cinema**
 

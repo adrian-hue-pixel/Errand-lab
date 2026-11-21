@@ -1,8 +1,10 @@
 """Presentation for the original ErrandLab interface on Streamlit."""
 from html import escape
+import os
 from pathlib import Path
 
 import streamlit as st
+from streamlit.errors import StreamlitSecretNotFoundError
 
 from capi import PROMPTS, answer, groq_topic, local_topic
 
@@ -18,9 +20,35 @@ SECTIONS = ("Overview", "Plan a route", "Evidence", "Capi chat", "Settings")
 
 CSS = """
 .stApp {
+    isolation: isolate;
     background: var(--bg);
+    background-image: radial-gradient(#5c493c13 .65px, transparent .85px);
+    background-size: 26px 26px;
     color: var(--ink);
     font-family: Inter, Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.stApp::before, .stApp::after {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    pointer-events: none;
+    width: min(880px, 100vw);
+    height: min(740px, 100vh);
+    border-radius: 50%;
+}
+.stApp::before {
+    top: -28vh; right: -14vw;
+    background: radial-gradient(ellipse at center, #e9b48b44, transparent 68%);
+}
+.stApp::after {
+    bottom: -31vh; left: -21vw;
+    background: radial-gradient(ellipse at center, #b3b59546, transparent 70%);
+}
+@media (prefers-reduced-motion: no-preference) {
+    .stApp:not(:has(.motion-off))::before { animation: errand-warm-drift 25s ease-in-out infinite alternate; }
+    .stApp:not(:has(.motion-off))::after { animation: errand-sage-drift 32s ease-in-out infinite alternate; }
+    @keyframes errand-warm-drift { to { transform: translate3d(-13vw, 13vh, 0) scale(1.17); opacity: .75; } }
+    @keyframes errand-sage-drift { to { transform: translate3d(17vw, -14vh, 0) scale(1.22); opacity: .83; } }
 }
 [data-testid="stHeader"] { background: var(--paper); }
 [data-testid="stMainBlockContainer"] {
@@ -33,17 +61,32 @@ CSS = """
     border-bottom: 1px solid var(--line);
     padding: 0 0 1rem;
 }
-.st-key-errand-masthead [data-testid="stRadio"] [role="radiogroup"] {
-    background: #eaeae4;
-    border-radius: 16px;
-    padding: 4px 6px;
-    gap: .25rem;
+.st-key-errand-masthead [data-testid="stButtonGroup"] {
+    display: flex;
+    justify-content: center;
 }
-.st-key-errand-masthead [data-testid="stRadio"] label {
-    border-radius: 12px; padding: .5rem .75rem;
+.st-key-errand-masthead [data-testid="stButtonGroup"] [role="group"] {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    padding: 5px; border-radius: 17px; border: 1px solid #dedbd1;
+    background: #fdfbf6dc; box-shadow: 0 7px 22px #3427190d;
 }
-.st-key-errand-masthead [data-testid="stRadio"] label:has(input:checked) {
-    background: var(--paper); box-shadow: var(--shadow);
+.st-key-errand-masthead [data-testid="stButtonGroup"] button {
+    min-height: 38px; padding: .35rem .78rem;
+    border: 0; border-radius: 12px; color: var(--tone);
+    background: transparent; white-space: nowrap;
+}
+.st-key-errand-masthead [data-testid="stButtonGroup"] button p {
+    color: inherit; font-weight: 650; font-size: .85rem;
+}
+.st-key-errand-masthead [data-testid="stButtonGroup"] button:hover { color: var(--accent); background: #f4ebe2; }
+.st-key-errand-masthead [data-testid="stButtonGroup"] button:is([aria-pressed="true"], [data-testid="stBaseButton-pillsActive"]) {
+    background: var(--ink); color: #fffdf7; box-shadow: 0 2px 5px #35261b35;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .st-key-errand-masthead [data-testid="stButtonGroup"] button {
+        transition: background .2s ease, color .2s ease, transform .4s var(--spring);
+    }
+    .st-key-errand-masthead [data-testid="stButtonGroup"] button:active { transform: scale(.96); }
 }
 .atlas-mark {
     display: inline-grid; place-items: center; width: 32px; height: 32px;
@@ -153,7 +196,7 @@ CSS = """
     .stApp [data-testid="stButton"] button:active { transform: scale(.97); }
 }
 @media (max-width: 680px) {
-    .st-key-errand-masthead [data-testid="stRadio"] [role="radiogroup"] { flex-wrap: wrap; }
+    .st-key-errand-masthead [data-testid="stButtonGroup"] { justify-content: flex-start; }
     .st-key-old-hero .hero { padding-top: 44px; }
     .st-key-old-hero [data-testid="stHorizontalBlock"] { max-width: 100%; }
 }
@@ -184,7 +227,7 @@ def go(section):
 
 
 def navigate():
-    if st.session_state.errand_section != "Overview":
+    if st.session_state.errand_section not in (None, "Overview"):
         st.session_state.demo_active = True
 
 
@@ -194,8 +237,10 @@ def masthead():
         with brand:
             wordmark()
         with menu:
-            section = st.radio("Main navigation", SECTIONS, horizontal=True, key="errand_section",
-                               label_visibility="collapsed", on_change=navigate)
+            choice = st.segmented_control("Main navigation", SECTIONS, key="errand_section",
+                                          default=None if "errand_section" in st.session_state else "Overview",
+                                          label_visibility="collapsed", on_change=navigate)
+            section = choice or "Overview"
         with account:
             if st.session_state.get("demo_active"):
                 if st.button("Sign out"):
@@ -257,7 +302,7 @@ def heading(section):
         "Plan a route": ("Route planner", "Build your outing", "Choose an outing or enter your own stops, then compare route orders."),
         "Evidence": ("Research", "Which route holds up in traffic?", "Compare simulated success rates and observed outing times."),
         "Capi chat": ("Your route companion", "A little help for the road.", "Ask Capi about your route, the benchmark, or how ErrandLab works."),
-        "Settings": ("Preferences", "Make ErrandLab yours", "Choose how the app looks and how Capi connects."),
+        "Settings": ("Preferences", "Make ErrandLab yours", "Choose how the app looks and moves."),
     }[section]
     st.html(f'<header class="pagehead"><p class="eyebrow">{label}</p>'
             f'<h1>{title}</h1><p class="lede">{description}</p></header>')
@@ -276,36 +321,30 @@ def settings():
 
         st.toggle("Decorative motion", value=st.session_state.get("errand_motion", True),
                   key="motion_setting", on_change=update_motion)
-        st.divider()
-        st.subheader("Capi’s Groq connection")
-        st.caption("Optional. A saved key is kept for this browser session. If you use Groq, Capi classifies your question with Groq. Your route results stay in ErrandLab.")
-        with st.form("groq-key-form", clear_on_submit=True, border=False):
-            candidate = st.text_input("Groq API key", type="password", max_chars=200)
-            saved = st.form_submit_button("Save key")
-        if saved:
-            key = candidate.strip()
-            if not key.startswith("gsk_") or not key[4:].isalnum():
-                st.error("Enter a Groq key starting with gsk_.")
-            else:
-                st.session_state.errand_groq = key
-                st.success("Key saved for this session.")
-        if st.session_state.get("errand_groq"):
-            if st.button("Remove saved key"):
-                st.session_state.pop("errand_groq", None)
-                st.rerun()
-        st.markdown("[Get a key from Groq](https://console.groq.com/keys)")
+
+
+def hosted_groq_key():
+    """Read the deployment credential without putting it in widget state."""
+    key = os.environ.get("GROQ_API_KEY", "").strip()
+    if key:
+        return key
+    try:
+        value = st.secrets.get("GROQ_API_KEY", "")
+    except StreamlitSecretNotFoundError:
+        return ""
+    return value.strip() if isinstance(value, str) else ""
 
 
 def capi_chat():
     from urllib.error import URLError
 
-    key = st.session_state.get("errand_groq")
+    key = hosted_groq_key()
     result = st.session_state.get("result")
     with st.container(key="capi-intro"):
         heading("Capi chat")
     with st.container(key="capi-status"):
-        st.write("Groq key saved · ErrandLab questions only" if key else
-                 "Built-in guidance is ready. Add a Groq key in Settings for broader question matching.")
+        st.write("ErrandLab questions only. Capi uses Groq to match questions to app guidance." if key else
+                 "Built-in ErrandLab guidance is ready.")
     context, companion = st.columns((1.45, 1), gap="large")
     with context, st.container(key="capi-context"):
         st.subheader("Your outing")
