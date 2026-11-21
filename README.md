@@ -24,7 +24,7 @@
   <img alt="Hackathon" src="https://img.shields.io/badge/HACKATHON-TRIPLE%20H%202026-F0865A?style=for-the-badge&labelColor=555555">
 </p>
 
-# ErrandLab
+# ErrandLab By Adrian C
 
 **Plan errands around uncertain travel, closing times and a deadline to get home.**
 
