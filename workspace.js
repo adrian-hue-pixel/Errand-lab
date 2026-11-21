@@ -3,7 +3,7 @@
   const root = document.documentElement;
   const account = document.body.dataset.account;
   const prefix = 'errand:' + account + ':';
-  const keyName = prefix + 'groq';
+  const keyName = prefix + 'openrouter';
   const get = (storage,key) => { try { return storage.getItem(key); } catch { return null; } };
   const set = (storage,key,value) => { try { storage.setItem(key,value); return true; } catch { return false; } };
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -48,24 +48,25 @@
   if (location.pathname.startsWith('/run/')) set(sessionStorage,prefix+'notice','Your latest route comparison is ready.');
   $('notif-text').textContent=get(sessionStorage,prefix+'notice') || 'No new route updates.';
   const secret=()=>get(sessionStorage,keyName) || '';
-  const groq='https://api.groq.com/openai/v1';
-  const reason=status=>({401:'Groq rejected this key. Update it in Settings.',403:'This key cannot access the requested model.',429:'Groq’s limit was reached. Try again shortly.'}[status] || 'Groq could not complete this request. Try again.');
+  const openrouter='https://openrouter.ai/api/v1';
+  const model='nvidia/nemotron-3-ultra-550b-a55b:free';
+  const reason=status=>({401:'OpenRouter rejected this key. Update it in Settings.',403:'OpenRouter or the selected model provider denied the request.',429:'The free model reached its request limit. Try again later.'}[status] || 'OpenRouter could not complete this request. Try again.');
   if ($('api-key')) {
     const key=$('api-key'),status=$('key-status');
     key.value=secret();
-    status.textContent=key.value?'A key is stored for this tab. Test it to verify the connection.':'No Groq key saved.';
+    status.textContent=key.value?'An OpenRouter key is stored for this tab. Test it to verify the connection.':'No OpenRouter key saved.';
     $('reveal-key').onclick=()=>{key.type=key.type==='password'?'text':'password'; $('reveal-key').textContent=key.type==='text'?'Hide':'Show';};
     $('forget-key').onclick=()=>{sessionStorage.removeItem(keyName);key.value='';status.textContent='Key removed.';};
     $('check-key').onclick=async()=>{
       const candidate=key.value.trim();
-      if (!candidate) { status.textContent='Enter your Groq key first.';return; }
+      if (!candidate) { status.textContent='Enter your OpenRouter key first.';return; }
       status.textContent='Testing the connection…';
       try {
-        const response=await fetch(groq+'/models',{headers:{Authorization:'Bearer '+candidate},signal:AbortSignal.timeout(15000),credentials:'omit',redirect:'error'});
+        const response=await fetch(openrouter+'/models',{headers:{Authorization:'Bearer '+candidate,'HTTP-Referer':location.origin,'X-Title':'ErrandLab'},signal:AbortSignal.timeout(15000),credentials:'omit',redirect:'error'});
         if(candidate!==key.value.trim()) return;
         if(!response.ok) throw new Error(reason(response.status));
         status.textContent=set(sessionStorage,keyName,candidate)?'Connected. Key saved for this tab.':'Connected, but browser storage is unavailable.';
-      } catch(e) {status.textContent=e instanceof TypeError?'Could not reach Groq. Check your connection.':e.message;}
+      } catch(e) {status.textContent=e instanceof TypeError?'Could not reach OpenRouter. Check your connection.':e.message;}
     };
     $('pref-theme').value=root.dataset.theme;
     $('pref-theme').onchange=e=>theme(e.target.value);
@@ -95,7 +96,7 @@
           if(!line.startsWith('data:')) continue;
           const payload=line.slice(5).trim();if(payload==='[DONE]') return;
           const event=JSON.parse(payload);
-          if(event.error) throw new Error('Groq interrupted this response.');
+          if(event.error) throw new Error('OpenRouter interrupted this response.');
           const text=event.choices?.[0]?.delta?.content;
           if(text) onText(text);
         }
@@ -107,7 +108,7 @@
     e.preventDefault();
     const question=input.value.trim(), key=secret();
     if(!question || controller) return;
-    if(!key){bubble('error','Add and test your Groq key in Settings first.');return;}
+    if(!key){bubble('error','Add and test your OpenRouter key in Settings first.');return;}
     controller=new AbortController();
     const timeout=setTimeout(()=>controller?.abort(),50000);
     input.value='';bubble('user',question);const answer=bubble('assistant','Thinking…');
@@ -115,15 +116,15 @@
     let result='';
     try {
       const details=location.pathname.startsWith('/run/')?document.querySelector('.metrics')?.innerText:'';
-      const res=await fetch(groq+'/chat/completions',{method:'POST',signal:controller.signal,credentials:'omit',redirect:'error',
-        headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},
-        body:JSON.stringify({model:'openai/gpt-oss-20b',stream:true,max_completion_tokens:420,
+      const res=await fetch(openrouter+'/chat/completions',{method:'POST',signal:controller.signal,credentials:'omit',redirect:'error',
+        headers:{'Content-Type':'application/json',Authorization:'Bearer '+key,'HTTP-Referer':location.origin,'X-Title':'ErrandLab'},
+        body:JSON.stringify({model,stream:true,max_tokens:420,
           messages:[{role:'system',content:'You are Capi, a concise, calm route-planning capybara. Help users understand errands, time windows and simulation uncertainty. You cannot edit their account or plan. Distinguish estimates from observed trips. Current page: '+document.title+'. Route metrics: '+(details||'none supplied')},...history.slice(-8),{role:'user',content:question}]})});
       if(!res.ok) throw new Error(reason(res.status));
       await stream(res,text=>{mascot('speaking');result+=text;answer.textContent=result;messages.scrollTop=messages.scrollHeight;});
       if(!result) throw new Error('No reply arrived. Try asking again.');
       history.push({role:'user',content:question},{role:'assistant',content:result});
-    } catch(error) {answer.textContent=(result?result+' · ':'')+(error.name==='AbortError'?'Reply stopped.':error instanceof TypeError?'Groq is unreachable. Check your connection.':error.message);}
+    } catch(error) {answer.textContent=(result?result+' · ':'')+(error.name==='AbortError'?'Reply stopped.':error instanceof TypeError?'OpenRouter is unreachable. Check your connection.':error.message);}
     finally {clearTimeout(timeout);controller=null;mascot('idle');$('chat-form').querySelector('button').disabled=false;}
   };
   starters.onclick=e=>{if(e.target.tagName==='BUTTON'){input.value=e.target.textContent;$('chat-form').requestSubmit();}};
