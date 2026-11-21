@@ -1,3 +1,29 @@
+<p align="center">
+  <img src="assets/errandlab-banner-animated.svg" alt="ErrandLab: plan errands around uncertain travel, closing times and a deadline home" width="100%">
+</p>
+
+<!-- ===== Row 1: the headline badges ===== -->
+<p align="center">
+  <a href="https://errand-lab.streamlit.app/"><img alt="Live demo" src="https://img.shields.io/badge/LIVE%20DEMO-OPEN%20THE%20APP-F0865A?style=for-the-badge&labelColor=555555"></a>
+  <a href="tests"><img alt="Tests" src="https://img.shields.io/badge/TESTS-22%20PASSING-6AB42F?style=for-the-badge&labelColor=555555"></a>
+  <a href="evidence/benchmark.csv"><img alt="Engine" src="https://img.shields.io/badge/ENGINE-DELAY--AWARE-5AA0F8?style=for-the-badge&labelColor=555555"></a>
+  <img alt="Python" src="https://img.shields.io/badge/PYTHON-3.10%2B-4B78A8?style=for-the-badge&logo=python&logoColor=white&labelColor=555555">
+</p>
+
+<!-- ===== Row 2: what the app has ===== -->
+<p align="center">
+  <img alt="Routing" src="https://img.shields.io/badge/ROUTING-STDLIB%20ONLY-2DD4BF?style=for-the-badge&labelColor=555555">
+  <img alt="3D" src="https://img.shields.io/badge/3D%20SHOWCASE-THREE.JS-111111?style=for-the-badge&logo=threedotjs&logoColor=white&labelColor=555555">
+  <img alt="Storage" src="https://img.shields.io/badge/STORAGE-SQLITE-0F80C1?style=for-the-badge&logo=sqlite&logoColor=white&labelColor=555555">
+  <img alt="Chat" src="https://img.shields.io/badge/CAPI%20CHAT-GROQ-F55036?style=for-the-badge&labelColor=555555">
+</p>
+<p align="center">
+  <img alt="Security" src="https://img.shields.io/badge/AUTH-PBKDF2%20%2B%20CSRF-8B5CF6?style=for-the-badge&labelColor=555555">
+  <img alt="Benchmark" src="https://img.shields.io/badge/BENCHMARK-600%20SIMULATED%20DAYS-C99A2E?style=for-the-badge&labelColor=555555">
+  <img alt="AI disclosure" src="https://img.shields.io/badge/AI%20ASSISTED-DISCLOSED-6E7681?style=for-the-badge&labelColor=555555">
+  <img alt="Hackathon" src="https://img.shields.io/badge/HACKATHON-TRIPLE%20H%202026-F0865A?style=for-the-badge&labelColor=555555">
+</p>
+
 # ErrandLab
 
 **Plan errands around uncertain travel, closing times and a deadline to get home.**
